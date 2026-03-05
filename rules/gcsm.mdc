@@ -1,0 +1,112 @@
+---
+alwaysApply: true
+---
+
+一、背景
+为了方便后续 Bug 定位与代码维护，同时支持工具自动化生成 changelog，我们会对所有仓库启用 GitLab 远程 pre-receive 和 CI 检查。
+
+我们会陆续对所有仓库添加钩子，所有 Commit 必须遵循 Angular commit-message-format 规范，不符合规范的 commit 会被拒绝。
+
+二、简单介绍
+整体格式
+整个 Code Message 分成三部分组成，即 Header、Body、Footer 提交格式如下：
+<header>
+<BLANK LINE>
+
+<body>
+<BLANK LINE>
+
+<footer>
+
+每次提交可以包含页眉（Header）、正文（Body）和页脚（Footer），每次提交必须包含页眉（Header）
+每次提交的 Header、Body、Footer 信息不能超过 100 个字符
+
+【必要】Commit Message Header
+Header 是大家平常提交中最经常接触的，比如我们执行如下指令时：
+git commit -m "feat(config): PROJ-123 增加接口连接数参数"
+
+其中 "feat(config): PROJ-123 增加接口连接数参数" 就是 Header，整个 Header 分成三个部分：
+Commit type: 提交类型
+可选：build|ci|docs|feat|fix|perf|refactor|test
+Commit scope: 业务域或者组件名称
+名称可自定义，多个名称可用 "," 分隔。如 (config)、(api)、(config,api) 均可
+short summary: Header 摘要
+在概括含义的前提下尽量精简
+需要包含 JIRA 任务 KEY，例如 PROJ-123 就是任务 KEY。如果 Commit summary 中缺少 KEY，该 commit 会被 GitLab 远程钩子拒绝。
+
+<type>(<scope>): <short summary>
+  │       │             │
+  │       │             └─⫸ 中文描述的修改摘要，结尾不要加句号。比如 "修复了导出类型错误的问题"
+  │       │
+  │       └─⫸ Commit Scope: 可以理解成业务域或者业务组件
+  │
+  └─⫸ Commit Type: build|ci|docs|feat|fix|perf|refactor|test
+build: 影响构建系统或外部依赖的更改（示例范围：gulp, broccoli, npm）
+ci: 对持续集成配置文件和脚本的更改（示例：CircleCi, SauceLabs）
+docs: 仅文档的更改
+feat: 增加了新功能
+feat 必须要带 scope。比如 git commit -m "feat(xxx): PROJ-123 yyyyyyy"
+fix: 修复了某些 bug
+fix 必须带 scope。比如 git commit -m "fix(xxx): PROJ-123 yyyyyyy"
+perf: 提高性能的代码更改
+refactor: 既不修复错误也不添加功能的代码更改
+test: 添加缺失的测试用例或更正现有测试用例
+revert: 功能 commit 回滚
+chore: 非以上场景的杂务处理
+
+注：必须是半角 ：，同时  ： 后面必须跟一个空格。
+
+【可选】Commit Message Body
+针对本次 Commit 更详细的描述可以省略，非必要。
+
+【可选】Commit Message Footer
+页脚可以包含有关 breaking changes 和 deprecations，也是引用此提交关闭或关联的 Issues、PR 等链接，非必要。
+
+三、Header 使用举例
+build [scope 可选]
+不指定 scope
+git commit -m "build: PROJ-123 调整了构建脚本环境变量"
+指定 scope
+git commit -m "build(docker): PROJ-123 调整了 Dockerfile"
+
+ci [scope 可选]
+不指定 scope
+git commit -m "ci: PROJ-123 调整了 gitlab ci 单元测试脚本, 支持了 debug 模式"
+指定 scope
+git commit -m "ci(jenkins): PROJ-123 调整了 jenkins pipeline"
+
+docs [scope 可选]
+不指定 scope
+git commit -m "docs: PROJ-123 补充了关于鉴权流程相关的内容"
+指定 scope
+git commit -m "docs(api): PROJ-123 补充了关于 API 相关的文档"
+
+feat [scope 必填]
+git commit -m "feat(config): PROJ-123 支持动态获取配置"
+
+git commit -m "feat(api): PROJ-123 增加了新的登录接口"
+
+fix [scope 必填]
+git commit -m "fix(http): PROJ-123 修复了 HTTP 组件鉴权使用了错误 Header 的问题"
+
+git commit -m "fix(config): PROJ-123 修复了初始化配置加载失败的问题"
+
+
+perf [scope 可选]
+指定了 scope
+git commit -m "perf(http): PROJ-123 优化了 /users 接口性能，增加了 Redis 缓存"
+不指定 scope
+git commit -m "perf: PROJ-123 优化了内部处理变更导致的内存占用的问题"
+
+refactor [scope 可选]
+指定了 scope
+git commit -m "refactor(http): PROJ-123 调整 HTTP Server，将 echo 替换成 gin"
+不指定 scope
+git commit -m "refactor: PROJ-123 内部包路径进行规整，将部分不合理的包命名进行了规范"
+
+test  [scope 可选]
+指定了 scope
+git commit -m "test(http): PROJ-123 增加了 /users 接口的测试用例"
+不指定 scope
+git commit -m "test: PROJ-123 增加了 getCurrentTime 方法的测试用例"
+
