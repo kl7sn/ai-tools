@@ -33,3 +33,6 @@ go.work.sum
 
 # AI tools local data
 .claude/
+.awp/
+openspec/
+worktrees/
